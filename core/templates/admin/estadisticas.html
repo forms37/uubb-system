@@ -1,0 +1,148 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+  <h1>📊 Estadísticas UUBB</h1>
+
+  <form method="get" style="max-width: 900px;">
+    {{ form.as_p }}
+    <button type="submit" class="default">Aplicar filtros</button>
+  </form>
+
+  <hr>
+
+  <h2>Indicadores</h2>
+  <ul>
+    <li><b>Total:</b> {{ kpis.total }}</li>
+    <li><b>Activas:</b> {{ kpis.activas }}</li>
+    <li><b>Bajas:</b> {{ kpis.bajas }}</li>
+    <li><b>Total Vacantes (con dato):</b> {{ kpis.total_vacantes }}</li>
+    <li><b>Total Capacidad (con dato):</b> {{ kpis.total_capacidad }}</li>
+    <li><b>UUBB sin dato de vacantes:</b> {{ kpis.sin_vacantes_dato }}</li>
+    <li><b>UUBB sin tipo / sin información:</b> {{ kpis.sin_tipo }}</li>
+    <li><b>Alertas: vacantes &gt; capacidad:</b> {{ kpis.vacantes_mayor_capacidad }}</li>
+  </ul>
+
+  <hr>
+
+  <h2>Por Oficina Regional</h2>
+  <table class="adminlist" style="width:100%;">
+    <thead>
+      <tr>
+        <th>Oficina Regional</th><th>Total</th><th>Activas</th><th>Bajas</th>
+        <th>Vacantes</th><th>Capacidad</th><th>Sin vacantes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in por_or %}
+        <tr>
+          <td>{{ r.establecimiento__oficina_regional__nombre }}</td>
+          <td>{{ r.total }}</td><td>{{ r.activas }}</td><td>{{ r.bajas }}</td>
+          <td>{{ r.vacantes|default:"0" }}</td><td>{{ r.capacidad|default:"0" }}</td><td>{{ r.sin_vacantes }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h2>Por Establecimiento (EML)</h2>
+  <table class="adminlist" style="width:100%;">
+    <thead>
+      <tr>
+        <th>Oficina Regional</th><th>EML</th><th>Total</th><th>Activas</th><th>Bajas</th>
+        <th>Vacantes</th><th>Capacidad</th><th>Sin vacantes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in por_eml %}
+        <tr>
+          <td>{{ r.establecimiento__oficina_regional__nombre }}</td>
+          <td>{{ r.establecimiento__nombre }}</td>
+          <td>{{ r.total }}</td><td>{{ r.activas }}</td><td>{{ r.bajas }}</td>
+          <td>{{ r.vacantes|default:"0" }}</td><td>{{ r.capacidad|default:"0" }}</td><td>{{ r.sin_vacantes }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h2>Por Tipo de UUBB</h2>
+  <table class="adminlist" style="width:100%;">
+    <thead>
+      <tr><th>Tipo</th><th>Total</th><th>Activas</th><th>Bajas</th></tr>
+    </thead>
+    <tbody>
+      {% for r in por_tipo %}
+        <tr>
+          <td>{{ r.tipo|default:"(vacío)" }}</td>
+          <td>{{ r.total }}</td><td>{{ r.activas }}</td><td>{{ r.bajas }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h2>Matriz cruzada: Oficina Regional × Tipo</h2>
+
+  {% comment %}
+    Armamos la matriz en plantilla (simple): recolectamos tipos y ORs iterando.
+    Para algo más sofisticado, se arma en Python, pero esto funciona bien con pocos datos.
+  {% endcomment %}
+
+  {% with tipos=[] ors=[] %}
+  {% endwith %}
+
+  <p>Tip: si ves muchas variantes de “tipo” (Privada/PRIVADA), conviene normalizar en importación.</p>
+
+  <table class="adminlist" style="width:100%;">
+    <thead>
+      <tr>
+        <th>Oficina Regional</th>
+        {% for row in or_tipo_rows %}
+          {% if row.tipo and row.tipo not in tipos %}
+          {% endif %}
+        {% endfor %}
+        <th>(ver tabla debajo)</th>
+      </tr>
+    </thead>
+  </table>
+
+  <p>
+    Esta matriz se muestra mejor si la normalizamos. Para no complicar el HTML, abajo tienes la tabla cruzada “plana”.
+  </p>
+
+  <table class="adminlist" style="width:100%;">
+    <thead>
+      <tr><th>Oficina Regional</th><th>Tipo</th><th>Total</th><th>Activas</th><th>Bajas</th></tr>
+    </thead>
+    <tbody>
+      {% for r in or_tipo_rows %}
+        <tr>
+          <td>{{ r.establecimiento__oficina_regional__nombre }}</td>
+          <td>{{ r.tipo|default:"(vacío)" }}</td>
+          <td>{{ r.total }}</td><td>{{ r.activas }}</td><td>{{ r.bajas }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <hr>
+
+  <h2>Matriz cruzada: Establecimiento × Tipo</h2>
+  <table class="adminlist" style="width:100%;">
+    <thead>
+      <tr><th>EML</th><th>Tipo</th><th>Total</th><th>Activas</th><th>Bajas</th></tr>
+    </thead>
+    <tbody>
+      {% for r in eml_tipo_rows %}
+        <tr>
+          <td>{{ r.establecimiento__nombre }}</td>
+          <td>{{ r.tipo|default:"(vacío)" }}</td>
+          <td>{{ r.total }}</td><td>{{ r.activas }}</td><td>{{ r.bajas }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}
