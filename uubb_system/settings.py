@@ -8,7 +8,16 @@ MIDDLEWARE = ['django.middleware.security.SecurityMiddleware','django.contrib.se
 ROOT_URLCONF = 'uubb_system.urls'
 TEMPLATES = [{'BACKEND':'django.template.backends.django.DjangoTemplates','DIRS':[],'APP_DIRS':True,'OPTIONS':{'context_processors':['django.template.context_processors.debug','django.template.context_processors.request','django.contrib.auth.context_processors.auth','django.contrib.messages.context_processors.messages']}}]
 WSGI_APPLICATION = 'uubb_system.wsgi.application'
-DATABASES = {'default': {'ENGINE':'django.db.backends.sqlite3','NAME': BASE_DIR / 'db.sqlite3'}}
+import os
+import dj_database_url
+
+DATABASES = {
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        ssl_require=False,
+    )
+}
 LANGUAGE_CODE = 'es-pe'
 TIME_ZONE = 'America/Lima'
 STATIC_URL = 'static/'
