@@ -3,6 +3,8 @@ from django.shortcuts import render, redirect
 from django.urls import path
 from django.db import transaction
 
+from .forms import StatsForm
+from . import stats as stats_mod
 from .models import OficinaRegional, Establecimiento, UUBB
 from .forms import ImportExcelForm, ImportModo
 from .importer import read_uubb_excel, fill_text_fields, apply_bajas_por_ausencia
@@ -166,6 +168,40 @@ def import_excel_view(request):
 
     return render(request, "admin/import_excel.html", {"form": form})
 def export_excel_view(request):
+    def estadisticas_view(request):
+    form = StatsForm(request.GET or None)
+
+    qs = UUBB.objects.all()
+
+    if form.is_valid():
+        estado = form.cleaned_data.get("estado")
+        ofr = form.cleaned_data.get("oficina_regional")
+        est = form.cleaned_data.get("establecimiento")
+
+        if ofr:
+            qs = qs.filter(establecimiento__oficina_regional=ofr)
+        if est:
+            qs = qs.filter(establecimiento=est)
+
+        # Por defecto: activas
+        if not estado or estado == "ACTIVA":
+            qs = qs.filter(estado="ACTIVA")
+        elif estado == "BAJA":
+            qs = qs.filter(estado="BAJA")
+        elif estado == "TODAS":
+            pass
+
+    context = {
+        "form": form,
+        "kpis": stats_mod.kpis(qs),
+        "por_or": stats_mod.por_oficina_regional(qs),
+        "por_eml": stats_mod.por_establecimiento(qs),
+        "por_tipo": stats_mod.por_tipo(qs),
+        "or_tipo_rows": stats_mod.matriz_or_tipo(qs),
+        "eml_tipo_rows": stats_mod.matriz_eml_tipo(qs),
+    }
+    return render(request, "admin/estadisticas.html", context)
+
     form = ExportExcelForm(request.GET or None)
 
     qs = UUBB.objects.all()
@@ -207,6 +243,7 @@ def get_admin_urls(urls):
                 admin.site.admin_view(export_excel_view),
                 name="exportar_excel",
             ),
+            path("estadisticas/", admin.site.admin_view(estadisticas_view), name="estadisticas"),
         ] + urls
     return get_urls
 
