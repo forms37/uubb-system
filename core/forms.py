@@ -30,3 +30,15 @@ class ExportExcelForm(forms.Form):
     )
     oficina_regional = forms.ModelChoiceField(queryset=OficinaRegional.objects.all(), required=False)
     establecimiento = forms.ModelChoiceField(queryset=Establecimiento.objects.all(), required=False)
+class StatsForm(forms.Form):
+    estado = forms.ChoiceField(
+        required=False,
+        choices=[
+            ("", "ACTIVAS (por defecto)"),
+            ("ACTIVA", "Solo ACTIVAS"),
+            ("BAJA", "Solo BAJAS"),
+            ("TODAS", "TODAS (incluye BAJAS)"),
+        ],
+    )
+    oficina_regional = forms.ModelChoiceField(queryset=OficinaRegional.objects.all(), required=False)
+    establecimiento = forms.ModelChoiceField(queryset=Establecimiento.objects.all(), required=False)
