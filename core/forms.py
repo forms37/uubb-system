@@ -19,3 +19,14 @@ class ImportExcelForm(forms.Form):
 
     # Solo aplicar “bajas por ausencia” si este excel es una foto completa del ámbito:
     aplicar_bajas = forms.BooleanField(required=False, initial=False)
+class ExportExcelForm(forms.Form):
+    estado = forms.ChoiceField(
+        required=False,
+        choices=[
+            ("", "TODAS"),
+            ("ACTIVA", "ACTIVA"),
+            ("BAJA", "BAJA"),
+        ],
+    )
+    oficina_regional = forms.ModelChoiceField(queryset=OficinaRegional.objects.all(), required=False)
+    establecimiento = forms.ModelChoiceField(queryset=Establecimiento.objects.all(), required=False)
