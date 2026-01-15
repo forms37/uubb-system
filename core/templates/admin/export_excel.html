@@ -1,0 +1,21 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+  <h1>Exportar UUBB a Excel</h1>
+
+  <form method="get" style="max-width: 700px;">
+    {{ form.as_p }}
+
+    <button type="submit" name="filter" value="1" class="button">
+      Filtrar
+    </button>
+
+    <button type="submit" name="download" value="1" class="default">
+      📥 Descargar Excel
+    </button>
+  </form>
+
+  <hr>
+  <p>
+    Consejo: puedes descargar un respaldo mensual o trimestral.
+  </p>
+{% endblock %}
