@@ -25,13 +25,11 @@ class EstablecimientoAdmin(admin.ModelAdmin):
 
 @admin.register(UUBB)
 class UUBBAdmin(admin.ModelAdmin):
-    
-    list_display = ("codigo_uubb", "nombre_razon_social", "establecimiento", "estado", "vacantes_disponibles", "supervisor")
-    search_fields = ("codigo_uubb", "nombre_razon_social", "supervisor", "distrito")
+    list_display = ("id", "codigo_uubb")
+    search_fields = ("codigo_uubb",)
     
 class ImportAdminView(admin.AdminSite):
     pass
-
 
 # Agregamos una vista custom dentro del Admin
 def import_excel_view(request):
