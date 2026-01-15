@@ -168,7 +168,28 @@ def import_excel_view(request):
 
     return render(request, "admin/import_excel.html", {"form": form})
 def export_excel_view(request):
-    def estadisticas_view(request):
+
+    form = ExportExcelForm(request.GET or None)
+
+    qs = UUBB.objects.all()
+
+    if form.is_valid():
+        estado = form.cleaned_data.get("estado")
+        ofr = form.cleaned_data.get("oficina_regional")
+        est = form.cleaned_data.get("establecimiento")
+
+        if estado:
+            qs = qs.filter(estado=estado)
+        if ofr:
+            qs = qs.filter(establecimiento__oficina_regional=ofr)
+        if est:
+            qs = qs.filter(establecimiento=est)
+
+    if request.GET.get("download") == "1":
+        return export_uubb_to_excel(qs, filename="uubb_export.xlsx")
+
+    return render(request, "admin/export_excel.html", {"form": form})
+def estadisticas_view(request):
     form = StatsForm(request.GET or None)
 
     qs = UUBB.objects.all()
@@ -201,28 +222,6 @@ def export_excel_view(request):
         "eml_tipo_rows": stats_mod.matriz_eml_tipo(qs),
     }
     return render(request, "admin/estadisticas.html", context)
-
-    form = ExportExcelForm(request.GET or None)
-
-    qs = UUBB.objects.all()
-
-    if form.is_valid():
-        estado = form.cleaned_data.get("estado")
-        ofr = form.cleaned_data.get("oficina_regional")
-        est = form.cleaned_data.get("establecimiento")
-
-        if estado:
-            qs = qs.filter(estado=estado)
-        if ofr:
-            qs = qs.filter(establecimiento__oficina_regional=ofr)
-        if est:
-            qs = qs.filter(establecimiento=est)
-
-    if request.GET.get("download") == "1":
-        return export_uubb_to_excel(qs, filename="uubb_export.xlsx")
-
-    return render(request, "admin/export_excel.html", {"form": form})
-
 
 # Inyectar la URL dentro del admin (en el admin site por defecto)
 def get_admin_urls(urls):
