@@ -1,6 +1,12 @@
 {% extends "admin/base_site.html" %}
 {% block content %}
   <h1>Importar UUBB desde Excel</h1>
+<p>
+  <a href="{% url 'admin:descargar_plantilla_excel' %}" class="button">
+    📥 Descargar plantilla Excel
+  </a>
+</p>
+
   <p>
     <b>Modo por EML:</b> selecciona el establecimiento y sube su Excel.<br>
     <b>Modo consolidado:</b> el Excel debe contener la columna <code>NOMBRE DE EML</code>.
