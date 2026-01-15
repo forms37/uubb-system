@@ -6,7 +6,7 @@ from django.db import transaction
 from .models import OficinaRegional, Establecimiento, UUBB
 from .forms import ImportExcelForm, ImportModo
 from .importer import read_uubb_excel, fill_text_fields, apply_bajas_por_ausencia
-
+from .template_excel import descargar_plantilla_excel 
 
 @admin.register(OficinaRegional)
 class OficinaRegionalAdmin(admin.ModelAdmin):
@@ -166,8 +166,18 @@ def import_excel_view(request):
 def get_admin_urls(urls):
     def get_urls():
         return [
-            path("importar-excel/", admin.site.admin_view(import_excel_view), name="importar_excel"),
+            path(
+                "importar-excel/plantilla/",
+                admin.site.admin_view(lambda request: descargar_plantilla_excel()),
+                name="descargar_plantilla_excel",
+            ),
+            path(
+                "importar-excel/",
+                admin.site.admin_view(import_excel_view),
+                name="importar_excel",
+            ),
         ] + urls
     return get_urls
+
 
 admin.site.get_urls = get_admin_urls(admin.site.get_urls())
