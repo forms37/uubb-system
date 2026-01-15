@@ -4,16 +4,16 @@
 {% block object-tools %}
   <div style="margin-bottom: 12px;">
     <a href="{% url 'admin:importar_excel' %}" class="button default" style="margin-right: 8px;">
-      📥 Importar para actualizar BD de UUBB
+      📥 Importar o actualizar UUBB
     </a>
 
     <a href="{% url 'admin:exportar_excel' %}" class="button">
       📤 Exportar BD de UUBB
     </a>
-    <a href="{% url 'admin:estadisticas' %}" class="button" style="margin-left: 8px;">
-  📊 Estadísticas
-</a>
 
+    <a href="{% url 'admin:estadisticas' %}" class="button" style="margin-left: 8px;">
+      📊 Estadísticas
+    </a>
   </div>
 
   {{ block.super }}
