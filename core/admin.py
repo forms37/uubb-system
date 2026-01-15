@@ -3,14 +3,12 @@ from django.shortcuts import render, redirect
 from django.urls import path
 from django.db import transaction
 
-from .forms import StatsForm
-from . import stats as stats_mod
 from .models import OficinaRegional, Establecimiento, UUBB
-from .forms import ImportExcelForm, ImportModo
+from .forms import ImportExcelForm, ImportModo, ExportExcelForm, StatsForm
 from .importer import read_uubb_excel, fill_text_fields, apply_bajas_por_ausencia
-from .template_excel import descargar_plantilla_excel 
+from .template_excel import descargar_plantilla_excel
 from .exporter import export_uubb_to_excel
-from .forms import ExportExcelForm
+from . import stats as stats_mod
 
 @admin.register(OficinaRegional)
 class OficinaRegionalAdmin(admin.ModelAdmin):
