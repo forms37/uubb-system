@@ -7,6 +7,8 @@ from .models import OficinaRegional, Establecimiento, UUBB
 from .forms import ImportExcelForm, ImportModo
 from .importer import read_uubb_excel, fill_text_fields, apply_bajas_por_ausencia
 from .template_excel import descargar_plantilla_excel 
+from .exporter import export_uubb_to_excel
+from .forms import ExportExcelForm
 
 @admin.register(OficinaRegional)
 class OficinaRegionalAdmin(admin.ModelAdmin):
@@ -160,6 +162,27 @@ def import_excel_view(request):
         form = ImportExcelForm()
 
     return render(request, "admin/import_excel.html", {"form": form})
+def export_excel_view(request):
+    form = ExportExcelForm(request.GET or None)
+
+    qs = UUBB.objects.all()
+
+    if form.is_valid():
+        estado = form.cleaned_data.get("estado")
+        ofr = form.cleaned_data.get("oficina_regional")
+        est = form.cleaned_data.get("establecimiento")
+
+        if estado:
+            qs = qs.filter(estado=estado)
+        if ofr:
+            qs = qs.filter(establecimiento__oficina_regional=ofr)
+        if est:
+            qs = qs.filter(establecimiento=est)
+
+    if request.GET.get("download") == "1":
+        return export_uubb_to_excel(qs, filename="uubb_export.xlsx")
+
+    return render(request, "admin/export_excel.html", {"form": form})
 
 
 # Inyectar la URL dentro del admin (en el admin site por defecto)
@@ -176,8 +199,12 @@ def get_admin_urls(urls):
                 admin.site.admin_view(import_excel_view),
                 name="importar_excel",
             ),
+            path(
+                "exportar-excel/",
+                admin.site.admin_view(export_excel_view),
+                name="exportar_excel",
+            ),
         ] + urls
     return get_urls
-
 
 admin.site.get_urls = get_admin_urls(admin.site.get_urls())
