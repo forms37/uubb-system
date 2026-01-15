@@ -1,0 +1,16 @@
+{% extends "admin/change_list.html" %}
+{% load i18n admin_urls %}
+
+{% block object-tools %}
+  <div style="margin-bottom: 12px;">
+    <a href="{% url 'admin:importar_excel' %}" class="button default" style="margin-right: 8px;">
+      📥 Importar para actualizar BD de UUBB
+    </a>
+
+    <a href="{% url 'admin:exportar_excel' %}" class="button">
+      📤 Exportar BD de UUBB
+    </a>
+  </div>
+
+  {{ block.super }}
+{% endblock %}
