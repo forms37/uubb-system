@@ -25,9 +25,12 @@ class EstablecimientoAdmin(admin.ModelAdmin):
 
 @admin.register(UUBB)
 class UUBBAdmin(admin.ModelAdmin):
+    change_list_template = "admin/core/uubb/change_list.html"
+    
     list_display = ("codigo_uubb", "nombre_razon_social", "establecimiento", "estado", "vacantes_disponibles", "supervisor")
     list_filter = ("estado", "establecimiento", "establecimiento__oficina_regional")
     search_fields = ("codigo_uubb", "nombre_razon_social", "supervisor", "distrito")
+    
 
 
 class ImportAdminView(admin.AdminSite):
