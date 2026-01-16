@@ -8,7 +8,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret")
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 ALLOWED_HOSTS = ["*"]
-
+# Usa DATABASE_URL si existe (Render). Si no, usa SQLite local.
+DATABASES = {
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        ssl_require=True,
+    )
+}
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -49,14 +56,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "uubb_system.wsgi.application"
 
-# Usa DATABASE_URL si existe (Render). Si no, usa SQLite local.
-DATABASES = {
-    "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600,
-        ssl_require=True,
-    )
-}
 
 LANGUAGE_CODE = "es-pe"
 TIME_ZONE = "America/Lima"
