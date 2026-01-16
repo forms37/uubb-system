@@ -1,15 +1,12 @@
 from pathlib import Path
 import os
+from pathlib import Path
 import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Lee SECRET_KEY desde Render. Si no existe (local), usa una por defecto.
-SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret-local")
-
-# En Render debería ser False
-DEBUG = os.environ.get("DEBUG", "False") == "True"
-
+SECRET_KEY = os.environ.get("SECRET_KEY", "dev-secret")
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
